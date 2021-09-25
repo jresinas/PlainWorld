@@ -14,15 +14,22 @@ public class CharacterController : MonoBehaviour {
     float HURT_STUN_TIME = 0.5f;
     float HURT_INV_TIME = 3;
     float BLINKING_INTERVAL = 0.1f;
-    bool lookRight = false;
+    //bool lookRight = false;
     bool isJumping = false;
     bool isHurt = false;
+    bool isMount = false;
     bool isInvencible = false;
+    HorseController mount;
 
     void Update() {
         float inputHorizontal = Input.GetAxis("Horizontal");
 
-        if (!isHurt) {
+        if (isMount) {
+            transform.position = new Vector2(mount.transform.position.x, mount.transform.position.y + 1);
+            transform.localScale = mount.transform.localScale;
+        }
+
+        if (!isHurt && !isMount) {
             if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
                 Move(-1);
             } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
@@ -38,6 +45,30 @@ public class CharacterController : MonoBehaviour {
             if (Input.GetButtonDown("Fire3") && !IsAttacking()) {
                 Slam();
             }
+
+            if (Input.GetButtonDown("Fire2")) {
+                List<HorseController> nearHorses = SearchHorse();
+                if (nearHorses.Count > 0) {
+                    Mount(nearHorses[0]);
+                }
+            }
+        } else if (!isHurt && isMount) {
+            rb.velocity = Vector2.zero;
+            if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
+                mount.Move(-1);
+            } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
+                mount.Move(1);
+            } else {
+                //mount.Idle();
+            }
+
+            if (Input.GetButtonDown("Fire2")) {
+                Dismount();
+            }
+
+            if (Input.GetButtonDown("Fire3") && !IsAttacking()) {
+                Slam();
+            }
         }
     }
 
@@ -45,9 +76,9 @@ public class CharacterController : MonoBehaviour {
         anim.SetBool("Walk", true);
         rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
 
-        if (direction > 0 && !lookRight) {
+        if (direction > 0 && !IsLookingRight()) {
             Turn(1);
-        } else if (direction < 0 && lookRight) {
+        } else if (direction < 0 && IsLookingRight()) {
             Turn(-1);
         }
     }
@@ -58,7 +89,7 @@ public class CharacterController : MonoBehaviour {
 
     void Turn(int direction) {
         transform.localScale = new Vector2(-direction, 1);
-        lookRight = (direction == 1);
+        //lookRight = (direction == 1);
     }
 
     void Jump() {
@@ -143,5 +174,44 @@ public class CharacterController : MonoBehaviour {
             color.a = alpha;
             sprite.color = color;
         }
+    }
+
+
+    void Mount(HorseController horse) {
+        StopAnimation();
+        anim.SetBool("Mount", true);
+        horse.Mount();
+        isMount = true;
+        mount = horse;
+    }
+
+    void Dismount() {
+        anim.SetBool("Mount", false);
+        mount.Dismount();
+        isMount = false;
+        mount = null;  
+    }
+
+    List<HorseController> SearchHorse() {
+        List<HorseController> near = new List<HorseController>();
+        HorseController[] horses = FindObjectsOfType<HorseController>();
+        foreach (HorseController horse in horses) {
+            if (Mathf.Abs(horse.transform.position.x - transform.position.x) < 2) {
+                near.Add(horse);
+            }
+        }
+        return near;
+    }
+
+
+    void StopAnimation() {
+        anim.SetBool("Walk", false);
+        anim.SetBool("Jump", false);
+        anim.SetBool("Mount", false);
+    }
+
+
+    bool IsLookingRight() {
+        return transform.localScale.x == -1;
     }
 }
