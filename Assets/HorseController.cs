@@ -6,10 +6,14 @@ public class HorseController : MonoBehaviour {
     [SerializeField] Animator anim;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] BoxCollider2D collider;
+    [SerializeField] LayerMask floorLayer;
 
-    float WALK_SPEED = 14f;
-    float RUN_SPEED = 30f;
-    bool lookRight = false;
+    float WALK_SPEED = 10f;
+    float RUN_SPEED = 32f;
+    float RUN_ACCEL = 8;
+    float JUMP_VELOCITY = 25f;
+
+    public bool isJumping = false;
 
     private void Update() {
         if (rb.velocity.x != 0) {
@@ -19,13 +23,13 @@ public class HorseController : MonoBehaviour {
         } else Idle();
     }
 
-
+    #region Move
     public void Move(int direction) {
-        rb.AddForce(new Vector2(direction * 8, 0), ForceMode2D.Force);
-        if (rb.velocity.x > 0 && !lookRight) Turn(1);
-        else if (rb.velocity.x < 0 && lookRight) Turn(-1);
-        if (rb.velocity.x > RUN_SPEED) rb.velocity = new Vector2(RUN_SPEED, rb.velocity.y);
-        if (rb.velocity.x < -RUN_SPEED) rb.velocity = new Vector2(-RUN_SPEED, rb.velocity.y);
+        rb.AddForce(new Vector2(direction * RUN_ACCEL, 0), ForceMode2D.Force);
+        if (rb.velocity.x > 0 && !IsLookingRight()) Turn(1);
+        else if (rb.velocity.x < 0 && IsLookingRight()) Turn(-1);
+        if (rb.velocity.x >= RUN_SPEED) rb.velocity = new Vector2(RUN_SPEED, rb.velocity.y);
+        if (rb.velocity.x <= -RUN_SPEED) rb.velocity = new Vector2(-RUN_SPEED, rb.velocity.y);
     }
 
     public void Idle() {
@@ -35,9 +39,49 @@ public class HorseController : MonoBehaviour {
 
     void Turn(int direction) {
         transform.localScale = new Vector2(-direction, 1);
-        lookRight = (direction == 1);
     }
 
+    bool IsLookingRight() {
+        return transform.localScale.x == -1;
+    }
+    #endregion
+
+    #region Jump
+    public void Jump() {
+        anim.SetBool("Jump", true);
+        isJumping = true;
+        rb.velocity += Vector2.up * JUMP_VELOCITY;
+        StartCoroutine(Raising());
+    }
+
+
+    IEnumerator Raising() {
+        yield return new WaitUntil(() => !IsGrounded());
+        StartCoroutine(InAir());
+    }
+
+    IEnumerator InAir() {
+        yield return new WaitUntil(() => IsGrounded());
+        Landing();
+    }
+
+    void Landing() {
+        anim.SetBool("Jump", false);
+        isJumping = false;
+    }
+
+    public bool IsGrounded() {
+        float offset = 0.1f;
+        RaycastHit2D raycastHit = Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, 0f, Vector2.down, offset, floorLayer);
+        return raycastHit.collider != null;
+    }
+
+    public bool IsJumping() {
+        return isJumping;
+    }
+    #endregion
+
+    #region Mount
     public void Mount() {
         SpriteRenderer sprite = GetComponentInChildren<SpriteRenderer>();
         sprite.sortingOrder = -2;
@@ -47,4 +91,5 @@ public class HorseController : MonoBehaviour {
         SpriteRenderer sprite = GetComponentInChildren<SpriteRenderer>();
         sprite.sortingOrder = -5;
     }
+    #endregion
 }

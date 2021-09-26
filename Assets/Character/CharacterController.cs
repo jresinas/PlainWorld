@@ -14,7 +14,6 @@ public class CharacterController : MonoBehaviour {
     float HURT_STUN_TIME = 0.5f;
     float HURT_INV_TIME = 3;
     float BLINKING_INTERVAL = 0.1f;
-    //bool lookRight = false;
     bool isJumping = false;
     bool isHurt = false;
     bool isMount = false;
@@ -69,9 +68,14 @@ public class CharacterController : MonoBehaviour {
             if (Input.GetButtonDown("Fire3") && !IsAttacking()) {
                 Slam();
             }
+
+            if (Input.GetButtonDown("Jump") && mount.IsGrounded() && !mount.IsJumping()) {
+                mount.Jump();
+            }
         }
     }
 
+    #region Move
     void Move(int direction) {
         anim.SetBool("Walk", true);
         rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
@@ -89,13 +93,18 @@ public class CharacterController : MonoBehaviour {
 
     void Turn(int direction) {
         transform.localScale = new Vector2(-direction, 1);
-        //lookRight = (direction == 1);
     }
 
+    bool IsLookingRight() {
+        return transform.localScale.x == -1;
+    }
+    #endregion
+
+    #region Jump
     void Jump() {
         anim.SetBool("Jump", true);
         isJumping = true;
-        rb.velocity = Vector2.up * JUMP_VELOCITY;
+        rb.velocity += Vector2.up * JUMP_VELOCITY;
         StartCoroutine(Raising());
     }
 
@@ -115,13 +124,14 @@ public class CharacterController : MonoBehaviour {
         isJumping = false;
     }
     
-
     bool IsGrounded() {
         float offset = 0.1f;
         RaycastHit2D raycastHit = Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, 0f, Vector2.down, offset, floorLayer);
         return raycastHit.collider != null;
     }
+    #endregion
 
+    #region Attack
     void Slam() {
         anim.SetLayerWeight(1, 1);
         anim.SetTrigger("Slam");
@@ -130,7 +140,9 @@ public class CharacterController : MonoBehaviour {
     bool IsAttacking() {
         return anim.GetLayerWeight(1) > 0;
     }
+    #endregion
 
+    #region Hurt
     public void Damage(int direction) {
         if (!isInvencible) {
             Debug.Log("Character Damage");
@@ -175,8 +187,9 @@ public class CharacterController : MonoBehaviour {
             sprite.color = color;
         }
     }
+    #endregion
 
-
+    #region Mount
     void Mount(HorseController horse) {
         StopAnimation();
         anim.SetBool("Mount", true);
@@ -202,16 +215,11 @@ public class CharacterController : MonoBehaviour {
         }
         return near;
     }
-
+    #endregion
 
     void StopAnimation() {
         anim.SetBool("Walk", false);
         anim.SetBool("Jump", false);
         anim.SetBool("Mount", false);
-    }
-
-
-    bool IsLookingRight() {
-        return transform.localScale.x == -1;
     }
 }

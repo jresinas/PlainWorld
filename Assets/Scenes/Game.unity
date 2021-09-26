@@ -158,6 +158,10 @@ MonoBehaviour:
   anim: {fileID: 7873085}
   rb: {fileID: 7873087}
   collider: {fileID: 7873086}
+  floorLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  isJumping: 0
 --- !u!95 &7873085
 Animator:
   serializedVersion: 3
@@ -1441,6 +1445,10 @@ MonoBehaviour:
   anim: {fileID: 850404693}
   rb: {fileID: 850404695}
   collider: {fileID: 850404694}
+  floorLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  isJumping: 0
 --- !u!95 &850404693
 Animator:
   serializedVersion: 3
@@ -2154,6 +2162,10 @@ MonoBehaviour:
   anim: {fileID: 1449714909}
   rb: {fileID: 1449714911}
   collider: {fileID: 1449714910}
+  floorLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  isJumping: 0
 --- !u!95 &1449714909
 Animator:
   serializedVersion: 3
@@ -2540,6 +2552,10 @@ MonoBehaviour:
   anim: {fileID: 1708136517}
   rb: {fileID: 1708136519}
   collider: {fileID: 1708136518}
+  floorLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  isJumping: 0
 --- !u!95 &1708136517
 Animator:
   serializedVersion: 3
