@@ -18,6 +18,7 @@ public class CharacterController : MonoBehaviour {
     bool isHurt = false;
     bool isMount = false;
     bool isInvencible = false;
+    bool isBlocking = false;
     HorseController mount;
 
     void Update() {
@@ -29,28 +30,37 @@ public class CharacterController : MonoBehaviour {
         }
 
         if (!isHurt && !isMount) {
-            if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
-                Move(-1);
-            } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
-                Move(1);
-            } else {
-                Idle();
-            }
+            if (!isBlocking) {
+                if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
+                    Move(-1);
+                } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
+                    Move(1);
+                } else {
+                    Idle();
+                }
 
-            if (Input.GetButtonDown("Jump") && IsGrounded() && !isJumping) {
-                Jump();
-            }
+                if (Input.GetButtonDown("Jump") && IsGrounded() && !isJumping) {
+                    Jump();
+                }
 
-            if (Input.GetButtonDown("Fire3") && !IsAttacking()) {
-                Slam();
-            }
+                if (Input.GetButtonDown("Fire3") && !IsAttacking()) {
+                    Slam();
+                }
 
-            if (Input.GetButtonDown("Fire2")) {
-                List<HorseController> nearHorses = SearchHorse();
-                if (nearHorses.Count > 0) {
-                    Mount(nearHorses[0]);
+                if (Input.GetButtonDown("Fire2")) {
+                    List<HorseController> nearHorses = SearchHorse();
+                    if (nearHorses.Count > 0) {
+                        Mount(nearHorses[0]);
+                    }
                 }
             }
+
+            if (Input.GetButton("Block") && !IsBusy()) {
+                Block();
+            }
+
+            if (isBlocking && !Input.GetButton("Block")) Unblock();
+
         } else if (!isHurt && isMount) {
             rb.velocity = Vector2.zero;
             if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
@@ -147,7 +157,6 @@ public class CharacterController : MonoBehaviour {
         if (!isInvencible) {
             Debug.Log("Character Damage");
             anim.SetTrigger("Hurt");
-            //rb.AddForce(Vector2.right * 2000 * direction + Vector2.up * 200);
             rb.velocity = (Vector2.right * 20 * direction + Vector2.up * 2);
             isHurt = true;
             isInvencible = true;
@@ -209,7 +218,8 @@ public class CharacterController : MonoBehaviour {
         List<HorseController> near = new List<HorseController>();
         HorseController[] horses = FindObjectsOfType<HorseController>();
         foreach (HorseController horse in horses) {
-            if (Mathf.Abs(horse.transform.position.x - transform.position.x) < 2) {
+            //if (Mathf.Abs(horse.transform.position.x - transform.position.x) < 2) {
+            if (Vector2.Distance(horse.transform.position, transform.position) < 2) {
                 near.Add(horse);
             }
         }
@@ -217,9 +227,29 @@ public class CharacterController : MonoBehaviour {
     }
     #endregion
 
+    #region Block
+    void Block() {
+        anim.SetBool("Block", true);
+        isBlocking = true;
+    }
+
+    void Unblock() {
+        anim.SetBool("Block", false);
+        isBlocking = false;
+    }
+    #endregion
+
     void StopAnimation() {
         anim.SetBool("Walk", false);
         anim.SetBool("Jump", false);
         anim.SetBool("Mount", false);
+        anim.SetBool("Block", false); 
+    }
+
+    bool IsBusy() {
+        return anim.GetBool("Walk") ||
+            anim.GetBool("Jump") ||
+            anim.GetBool("Mount") ||
+            anim.GetBool("Block");
     }
 }
