@@ -8,6 +8,17 @@ public class CharacterController : MonoBehaviour {
     [SerializeField] BoxCollider2D collider;
     [SerializeField] LayerMask floorLayer;
 
+    [SerializeField] SpriteRenderer charHair;
+    [SerializeField] SpriteRenderer charFacialHair;
+
+    [SerializeField] SpriteRenderer charHelmet;
+    [SerializeField] SpriteRenderer charWeapon;
+    [SerializeField] SpriteRenderer charShield;
+
+    [SerializeField] EquipHelmet equipHelmet;
+    [SerializeField] EquipWeapon equipWeapon;
+    [SerializeField] EquipShield equipShield;
+
     float THRESHOLD_HORIZONTAL_INPUT = 0.25f;
     float MOVE_SPEED = 6f;
     float JUMP_VELOCITY = 20f;
@@ -20,6 +31,12 @@ public class CharacterController : MonoBehaviour {
     bool isInvencible = false;
     bool isBlocking = false;
     HorseController mount;
+
+    void Start() {
+        if (equipHelmet != null) SetHelmet(equipHelmet);
+        if (equipWeapon != null) SetWeapon(equipWeapon);
+        if (equipShield != null) SetShield(equipShield);
+    }
 
     void Update() {
         float inputHorizontal = Input.GetAxis("Horizontal");
@@ -251,5 +268,23 @@ public class CharacterController : MonoBehaviour {
             anim.GetBool("Jump") ||
             anim.GetBool("Mount") ||
             anim.GetBool("Block");
+    }
+
+
+    void SetHelmet(EquipHelmet helmet) {
+        charHelmet.sprite = helmet.image;
+        charHelmet.transform.localPosition = new Vector2(helmet.xOffset, helmet.yOffset);
+        charHair.enabled = !helmet.hideHair;
+        charFacialHair.enabled = !helmet.hideFacialHair;
+    }
+
+    void SetWeapon(EquipWeapon weapon) {
+        charWeapon.sprite = weapon.image;
+        charWeapon.transform.localPosition = new Vector2(weapon.xOffset, weapon.yOffset);
+    }
+
+    void SetShield(EquipShield shield) {
+        charShield.sprite = shield.image;
+        charShield.transform.localPosition = new Vector2(shield.xOffset, shield.yOffset);
     }
 }
