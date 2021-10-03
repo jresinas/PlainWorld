@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,12 +20,13 @@ public class CharacterController : MonoBehaviour {
     [SerializeField] EquipWeapon equipWeapon;
     [SerializeField] EquipShield equipShield;
 
-    float THRESHOLD_HORIZONTAL_INPUT = 0.25f;
-    float MOVE_SPEED = 6f;
-    float JUMP_VELOCITY = 20f;
-    float HURT_STUN_TIME = 0.5f;
-    float HURT_INV_TIME = 3;
-    float BLINKING_INTERVAL = 0.1f;
+    [SerializeField] float MOVE_SPEED = 6f;
+    [SerializeField] float JUMP_VELOCITY = 20f;
+    [SerializeField] float HURT_STUN_TIME = 0.5f;
+    [SerializeField] float HURT_INV_TIME = 3;
+    [SerializeField] float BLINKING_INTERVAL = 0.1f;
+    [SerializeField] Vector2 DAMAGE_PUSH = new Vector2(20,2);
+    [SerializeField] Vector2 BLOCK_PUSH = new Vector2(10,2);
     bool isJumping = false;
     bool isHurt = false;
     bool isMount = false;
@@ -39,72 +41,16 @@ public class CharacterController : MonoBehaviour {
     }
 
     void Update() {
-        float inputHorizontal = Input.GetAxis("Horizontal");
-
         if (isMount) {
-            transform.position = new Vector2(mount.transform.position.x, mount.transform.position.y + 1);
+            transform.position = mount.GetMount().transform.position; 
+            //transform.position = new Vector2(mount.transform.position.x, mount.transform.position.y + 1);
             transform.localScale = mount.transform.localScale;
-        }
-
-        if (!isHurt && !isMount) {
-            if (!isBlocking) {
-                if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
-                    Move(-1);
-                } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
-                    Move(1);
-                } else {
-                    Idle();
-                }
-
-                if (Input.GetButtonDown("Jump") && IsGrounded() && !isJumping) {
-                    Jump();
-                }
-
-                if (Input.GetButtonDown("Fire3") && !IsAttacking()) {
-                    Slam();
-                }
-
-                if (Input.GetButtonDown("Fire2")) {
-                    List<HorseController> nearHorses = SearchHorse();
-                    if (nearHorses.Count > 0) {
-                        Mount(nearHorses[0]);
-                    }
-                }
-            }
-
-            if (Input.GetButton("Block") && !IsBusy()) {
-                Block();
-            }
-
-            if (isBlocking && !Input.GetButton("Block")) Unblock();
-
-        } else if (!isHurt && isMount) {
-            rb.velocity = Vector2.zero;
-            if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
-                mount.Move(-1);
-            } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
-                mount.Move(1);
-            } else {
-                //mount.Idle();
-            }
-
-            if (Input.GetButtonDown("Fire2")) {
-                Dismount();
-            }
-
-            if (Input.GetButtonDown("Fire3") && !IsAttacking()) {
-                Slam();
-            }
-
-            if (Input.GetButtonDown("Jump") && mount.IsGrounded() && !mount.IsJumping()) {
-                mount.Jump();
-            }
-        }
+        }        
     }
 
     #region Move
-    void Move(int direction) {
-        anim.SetBool("Walk", true);
+    public void Move(int direction) {
+        if (IsGrounded()) anim.SetBool("Walk", true);
         rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
 
         if (direction > 0 && !IsLookingRight()) {
@@ -114,11 +60,11 @@ public class CharacterController : MonoBehaviour {
         }
     }
 
-    void Idle() {
+    public void Idle() {
         anim.SetBool("Walk", false);
     }
 
-    void Turn(int direction) {
+    public void Turn(int direction) {
         transform.localScale = new Vector2(-direction, 1);
     }
 
@@ -128,7 +74,7 @@ public class CharacterController : MonoBehaviour {
     #endregion
 
     #region Jump
-    void Jump() {
+    public void Jump() {
         anim.SetBool("Jump", true);
         isJumping = true;
         rb.velocity += Vector2.up * JUMP_VELOCITY;
@@ -137,11 +83,12 @@ public class CharacterController : MonoBehaviour {
 
     
     IEnumerator Raising() {
-        yield return new WaitUntil(() => !IsGrounded());
+        //yield return new WaitUntil(() => !IsGrounded());
+        yield return new WaitForSeconds(0.1f);
         StartCoroutine(InAir());
     }
 
-    IEnumerator InAir() { 
+    IEnumerator InAir() {
         yield return new WaitUntil(() => IsGrounded());
         Landing();
     }
@@ -151,34 +98,41 @@ public class CharacterController : MonoBehaviour {
         isJumping = false;
     }
     
-    bool IsGrounded() {
-        float offset = 0.1f;
+    public bool IsGrounded() {
+        float offset = 0.02f;
         RaycastHit2D raycastHit = Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, 0f, Vector2.down, offset, floorLayer);
         return raycastHit.collider != null;
+    }
+
+    public bool IsJumping() {
+        return isJumping;
     }
     #endregion
 
     #region Attack
-    void Slam() {
+    public void Slam() {
         anim.SetLayerWeight(1, 1);
         anim.SetTrigger("Slam");
     }
 
-    bool IsAttacking() {
+    public bool IsAttacking() {
         return anim.GetLayerWeight(1) > 0;
     }
     #endregion
 
     #region Hurt
     public void Damage(int direction) {
-        if (!isInvencible) {
-            Debug.Log("Character Damage");
+        if (!isInvencible && !isBlocking) {
+            anim.SetLayerWeight(1,0);
+            if (isMount) Dismount();
             anim.SetTrigger("Hurt");
-            rb.velocity = (Vector2.right * 20 * direction + Vector2.up * 2);
+            rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y);
             isHurt = true;
             isInvencible = true;
             StartCoroutine(HurtStun());
             StartCoroutine(HurtInvencible());
+        } else if (isBlocking) {
+            rb.velocity = (Vector2.right * BLOCK_PUSH.x * direction + Vector2.up * BLOCK_PUSH.y);
         }
     }
 
@@ -213,10 +167,16 @@ public class CharacterController : MonoBehaviour {
             sprite.color = color;
         }
     }
+
+    public bool IsHurt() {
+        return isHurt;
+    }
     #endregion
 
     #region Mount
-    void Mount(HorseController horse) {
+    public void Mount(HorseController horse) {
+        //rb.velocity = Vector2.zero;
+        rb.gravityScale = 0;
         StopAnimation();
         anim.SetBool("Mount", true);
         horse.Mount();
@@ -224,14 +184,16 @@ public class CharacterController : MonoBehaviour {
         mount = horse;
     }
 
-    void Dismount() {
+    public void Dismount() {
+        //rb.velocity = Vector2.zero;
+        rb.gravityScale = 4;
         anim.SetBool("Mount", false);
         mount.Dismount();
         isMount = false;
         mount = null;  
     }
 
-    List<HorseController> SearchHorse() {
+    public List<HorseController> SearchHorse() {
         List<HorseController> near = new List<HorseController>();
         HorseController[] horses = FindObjectsOfType<HorseController>();
         foreach (HorseController horse in horses) {
@@ -242,17 +204,33 @@ public class CharacterController : MonoBehaviour {
         }
         return near;
     }
+
+    public bool IsMount() {
+        return isMount;
+    }
+
+    public HorseController GetMount() {
+        return mount;
+    }
     #endregion
 
     #region Block
-    void Block() {
+    public void Block() {
         anim.SetBool("Block", true);
+        //isBlocking = true;
+    }
+
+    public void HoldBlock() {
         isBlocking = true;
     }
 
-    void Unblock() {
+    public void Unblock() {
         anim.SetBool("Block", false);
         isBlocking = false;
+    } 
+
+    public bool IsBlocking() {
+        return isBlocking;
     }
     #endregion
 
@@ -263,7 +241,7 @@ public class CharacterController : MonoBehaviour {
         anim.SetBool("Block", false); 
     }
 
-    bool IsBusy() {
+    public bool IsBusy() {
         return anim.GetBool("Walk") ||
             anim.GetBool("Jump") ||
             anim.GetBool("Mount") ||

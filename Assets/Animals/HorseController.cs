@@ -7,6 +7,7 @@ public class HorseController : MonoBehaviour {
     [SerializeField] Rigidbody2D rb;
     [SerializeField] BoxCollider2D collider;
     [SerializeField] LayerMask floorLayer;
+    [SerializeField] Transform mount;
 
     float WALK_SPEED = 10f;
     float RUN_SPEED = 32f;
@@ -21,6 +22,10 @@ public class HorseController : MonoBehaviour {
             if (Mathf.Abs(rb.velocity.x) > WALK_SPEED) anim.SetBool("Run", true);
             else anim.SetBool("Run", false);
         } else Idle();
+    }
+
+    public Transform GetMount() {
+        return mount;
     }
 
     #region Move
@@ -56,7 +61,8 @@ public class HorseController : MonoBehaviour {
 
 
     IEnumerator Raising() {
-        yield return new WaitUntil(() => !IsGrounded());
+        //yield return new WaitUntil(() => !IsGrounded());
+        yield return new WaitForSeconds(0.1f);
         StartCoroutine(InAir());
     }
 
