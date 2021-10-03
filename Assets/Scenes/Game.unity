@@ -3031,7 +3031,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: ad9f440ec864d9742a77fc580f19cbff, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &1033537336
 BoxCollider2D:
@@ -5396,9 +5396,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character: {fileID: 1909126421}
   player: {fileID: 1033537334}
-  MIDDLE_DISTANCE: 40
-  NEAR_DISTANCE: 5
-  MAX_ATTACK_DISTANCE: 5.2
+  enemy: 1
+  ally: 0
+  MAX_MIDDLE_DISTANCE: 40
+  MIN_MIDDLE_DISTANCE: 7
+  NEAR_DISTANCE: 4
+  MAX_ATTACK_DISTANCE: 5
   MIN_ATTACK_DISTANCE: 2
 --- !u!95 &1909126418
 Animator:
@@ -5464,7 +5467,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: ad9f440ec864d9742a77fc580f19cbff, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &1909126421
 MonoBehaviour:

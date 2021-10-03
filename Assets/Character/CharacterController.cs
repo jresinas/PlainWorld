@@ -32,6 +32,7 @@ public class CharacterController : MonoBehaviour {
     bool isMount = false;
     bool isInvencible = false;
     bool isBlocking = false;
+    bool isHoldBlocking = false;
     HorseController mount;
 
     void Start() {
@@ -50,8 +51,10 @@ public class CharacterController : MonoBehaviour {
 
     #region Move
     public void Move(int direction) {
-        if (IsGrounded()) anim.SetBool("Walk", true);
-        rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
+        if (!IsBlocking()) {
+            if (IsGrounded()) anim.SetBool("Walk", true);
+            rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
+        }
 
         if (direction > 0 && !IsLookingRight()) {
             Turn(1);
@@ -111,8 +114,10 @@ public class CharacterController : MonoBehaviour {
 
     #region Attack
     public void Slam() {
-        anim.SetLayerWeight(1, 1);
-        anim.SetTrigger("Slam");
+        if (!IsBlocking()) {
+            anim.SetLayerWeight(1, 1);
+            anim.SetTrigger("Slam");
+        }
     }
 
     public bool IsAttacking() {
@@ -122,7 +127,8 @@ public class CharacterController : MonoBehaviour {
 
     #region Hurt
     public void Damage(int direction) {
-        if (!isInvencible && !isBlocking) {
+        //if (!isInvencible && !isBlocking) {
+        if (!isInvencible && !IsBlockSuccess(direction)) {
             anim.SetLayerWeight(1,0);
             if (isMount) Dismount();
             anim.SetTrigger("Hurt");
@@ -131,7 +137,8 @@ public class CharacterController : MonoBehaviour {
             isInvencible = true;
             StartCoroutine(HurtStun());
             StartCoroutine(HurtInvencible());
-        } else if (isBlocking) {
+        //} else if (isBlocking) {
+        } else if (IsBlockSuccess(direction)) {
             rb.velocity = (Vector2.right * BLOCK_PUSH.x * direction + Vector2.up * BLOCK_PUSH.y);
         }
     }
@@ -170,6 +177,10 @@ public class CharacterController : MonoBehaviour {
 
     public bool IsHurt() {
         return isHurt;
+    }
+
+    bool IsBlockSuccess(int hitDirection) {
+        return isBlocking && ((IsLookingRight() && hitDirection < 0) || (!IsLookingRight() && hitDirection > 0));
     }
     #endregion
 
@@ -217,20 +228,25 @@ public class CharacterController : MonoBehaviour {
     #region Block
     public void Block() {
         anim.SetBool("Block", true);
-        //isBlocking = true;
+        isBlocking = true;
     }
 
     public void HoldBlock() {
-        isBlocking = true;
+        isHoldBlocking = true;
     }
 
     public void Unblock() {
         anim.SetBool("Block", false);
         isBlocking = false;
+        isHoldBlocking = false;
     } 
 
     public bool IsBlocking() {
         return isBlocking;
+    }
+
+    public bool IsHoldBlocking() {
+        return isHoldBlocking;
     }
     #endregion
 
