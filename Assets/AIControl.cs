@@ -48,8 +48,7 @@ public class AIControl : MonoBehaviour {
 
 
     void Follow(Transform target) {
-        if (target.position.x < transform.position.x) character.Move(-1);
-        else character.Move(1);
+        character.Move(GetDirection(target));
     }
 
     void FollowCarefully(Transform target) {
@@ -66,13 +65,11 @@ public class AIControl : MonoBehaviour {
 
     void Look(Transform target) {
         character.Idle();
-        if (target.position.x < transform.position.x) character.Turn(-1);
-        if (target.position.x > transform.position.x) character.Turn(1);
+        character.Look(GetDirection(target));
     }
 
     void WalkAway(Transform target) {
-        if (target.position.x < transform.position.x) character.Move(1);
-        else character.Move(-1);
+        character.Move(-GetDirection(target));
     }
 
     void MeleeCombat(Transform target) {
@@ -121,5 +118,11 @@ public class AIControl : MonoBehaviour {
 
     bool IsAttackable(Transform target) {
         return Vector2.Distance(target.position, transform.position) <= MAX_ATTACK_DISTANCE && Vector2.Distance(target.position, transform.position) >= MIN_ATTACK_DISTANCE;
+    }
+
+    int GetDirection(Transform target) {
+        if (target.position.x < transform.position.x) return -1;
+        if (target.position.x > transform.position.x) return 1;
+        else return 0;
     }
 }

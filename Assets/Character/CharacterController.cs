@@ -49,22 +49,13 @@ public class CharacterController : MonoBehaviour {
         }        
     }
 
-    #region Move
-    public void Move(int direction) {
-        if (!IsBlocking()) {
-            if (IsGrounded()) anim.SetBool("Walk", true);
-            rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
-        }
-
+    #region Look
+    public void Look(int direction) {
         if (direction > 0 && !IsLookingRight()) {
             Turn(1);
         } else if (direction < 0 && IsLookingRight()) {
             Turn(-1);
         }
-    }
-
-    public void Idle() {
-        anim.SetBool("Walk", false);
     }
 
     public void Turn(int direction) {
@@ -73,6 +64,21 @@ public class CharacterController : MonoBehaviour {
 
     bool IsLookingRight() {
         return transform.localScale.x == -1;
+    }
+    #endregion
+
+    #region Move
+    public void Move(int direction) {
+        Look(direction);
+
+        if (!IsBlocking()) {
+            if (IsGrounded()) anim.SetBool("Walk", true);
+            rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
+        }
+    }
+
+    public void Idle() {
+        anim.SetBool("Walk", false);
     }
     #endregion
 
