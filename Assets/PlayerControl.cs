@@ -15,50 +15,44 @@ public class PlayerControl : MonoBehaviour {
         float inputHorizontal = Input.GetAxis("Horizontal");
 
         if (!character.IsHurt() && !character.IsMount()) {
-            //if (!character.IsBlocking()) {
             if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
                 character.Move(-1);
             } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
                 character.Move(1);
             } else {
                 character.Idle();
-                //character.Move(0);
             }
 
-            if (Input.GetButtonDown("Jump") && character.IsGrounded() && !character.IsJumping()) {
+            if (Input.GetButtonDown("Jump")) {
                 character.Jump();
             }
 
-            if (Input.GetButtonDown("Fire3") && !character.IsAttacking()) {
+            if (Input.GetButtonDown("Fire3")) {
                 character.Attack();
             }
 
             if (Input.GetButtonDown("Fire2")) {
                 character.Mount();
             }
-            //}
 
-            if (Input.GetButton("Block") && !character.IsBusy()) {
+            if (Input.GetButton("Block")) {
                 character.Block();
+            } else {
+                character.Unblock();
             }
-
-            if (character.IsBlocking() && !Input.GetButton("Block")) character.Unblock();
-
         } else if (!character.IsHurt() && character.IsMount()) {
             HorseController mount = character.GetMount();
             if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
                 mount.Move(-1);
             } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {
                 mount.Move(1);
-            } else {
-                //mount.Idle();
             }
 
             if (Input.GetButtonDown("Fire2")) {
                 character.Dismount();
             }
 
-            if (Input.GetButtonDown("Fire3") && !character.IsAttacking()) {
+            if (Input.GetButtonDown("Fire3")) {
                 character.Attack();
             }
 

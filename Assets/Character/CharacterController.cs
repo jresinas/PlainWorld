@@ -31,14 +31,13 @@ public class CharacterController : MonoBehaviour {
     }
 
     public void Jump() {
-        jump.Jump();
+        if  (jump.IsGrounded() && !jump.IsJumping()) jump.Jump();
     }
-    public bool IsJumping() => !jump.IsGrounded(); //jump.IsJumping();
-    public bool IsGrounded() => jump.IsGrounded();
 
     public void Attack() {
-        if (!block.IsBlocking()) attack.Attack();
+        if (!block.IsBlocking() && !IsAttacking()) attack.Attack();
     }
+
     public bool IsAttacking() => attack.IsAttacking();
 
     public void Hurt(int direction) {
@@ -49,14 +48,12 @@ public class CharacterController : MonoBehaviour {
     public bool IsHurt() => hurt.IsHurt();
 
     public void Block() {
-        block.Block();
+        if (!IsBusy()) block.Block();
     }
 
     public void Unblock() {
-        block.Unblock();
+        if (block.IsBlocking()) block.Unblock();
     }
-
-    public bool IsBlocking() => block.IsBlocking();
 
     bool IsBlockSuccess(int hitDirection) {
         return block.IsBlocking() && ((look.IsLookingRight() && hitDirection < 0) || (!look.IsLookingRight() && hitDirection > 0));
@@ -86,7 +83,7 @@ public class CharacterController : MonoBehaviour {
         anim.SetBool("Block", false); 
     }
 
-    public bool IsBusy() {
+    bool IsBusy() {
         return anim.GetBool("Walk") ||
             anim.GetBool("Jump") ||
             anim.GetBool("Mount") ||

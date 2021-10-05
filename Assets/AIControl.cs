@@ -19,7 +19,8 @@ public class AIControl : MonoBehaviour {
     private void Update() {
         lookingAt = player.transform;
         if (!character.IsHurt()) {
-            if (character.IsBlocking()) character.Unblock();
+            character.Unblock();
+            //if (character.IsBlocking()) character.Unblock();
             
             if (enemy) {
                 if (IsAttackable(lookingAt)) {
