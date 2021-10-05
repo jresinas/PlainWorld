@@ -17,7 +17,7 @@ public class AttackController : MonoBehaviour {
             int push_direction;
             if (collision.transform.position.x < character.position.x) push_direction = -1;
             else push_direction = 1;
-            enemy.Damage(push_direction);
+            enemy.Hurt(push_direction);
         }
     }
 }

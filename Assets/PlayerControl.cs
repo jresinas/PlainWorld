@@ -9,6 +9,9 @@ public class PlayerControl : MonoBehaviour {
     float THRESHOLD_HORIZONTAL_INPUT = 0.25f;
 
     void Update() {
+        //if (character.IsBlocking()) character.Unblock();
+
+
         float inputHorizontal = Input.GetAxis("Horizontal");
 
         if (!character.IsHurt() && !character.IsMount()) {
@@ -19,6 +22,7 @@ public class PlayerControl : MonoBehaviour {
                 character.Move(1);
             } else {
                 character.Idle();
+                //character.Move(0);
             }
 
             if (Input.GetButtonDown("Jump") && character.IsGrounded() && !character.IsJumping()) {
@@ -26,14 +30,11 @@ public class PlayerControl : MonoBehaviour {
             }
 
             if (Input.GetButtonDown("Fire3") && !character.IsAttacking()) {
-                character.Slam();
+                character.Attack();
             }
 
             if (Input.GetButtonDown("Fire2")) {
-                List<HorseController> nearHorses = character.SearchHorse();
-                if (nearHorses.Count > 0) {
-                    character.Mount(nearHorses[0]);
-                }
+                character.Mount();
             }
             //}
 
@@ -58,7 +59,7 @@ public class PlayerControl : MonoBehaviour {
             }
 
             if (Input.GetButtonDown("Fire3") && !character.IsAttacking()) {
-                character.Slam();
+                character.Attack();
             }
 
             if (Input.GetButtonDown("Jump") && mount.IsGrounded() && !mount.IsJumping()) {

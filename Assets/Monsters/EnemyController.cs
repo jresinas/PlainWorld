@@ -120,7 +120,7 @@ public class EnemyController : MonoBehaviour {
             //rb.AddForce(Vector2.right * 2000 * push_direction + Vector2.up * 200);
 
             CharacterController character = collision.gameObject.GetComponent<CharacterController>();
-            character.Damage(push_direction);
+            character.Hurt(push_direction);
         }
     }
 }

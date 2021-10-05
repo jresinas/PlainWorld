@@ -42,6 +42,7 @@ public class AIControl : MonoBehaviour {
                 if (IsNear(lookingAt)) Look(lookingAt);
             }
         } else {
+            //character.Move(0);
             character.Idle();
         }
     }
@@ -64,6 +65,7 @@ public class AIControl : MonoBehaviour {
     }
 
     void Look(Transform target) {
+        //character.90);
         character.Idle();
         character.Look(GetDirection(target));
     }
@@ -101,7 +103,7 @@ public class AIControl : MonoBehaviour {
     }
 
     void MeleeAttack() {
-        character.Slam();
+        character.Attack();
     }
 
     bool IsMiddleDistance(Transform target) {

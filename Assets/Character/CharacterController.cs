@@ -7,254 +7,77 @@ public class CharacterController : MonoBehaviour {
     [SerializeField] Animator anim;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] BoxCollider2D collider;
-    [SerializeField] LayerMask floorLayer;
 
-    [SerializeField] SpriteRenderer charHair;
-    [SerializeField] SpriteRenderer charFacialHair;
+    [SerializeField] CharacterLook look;
+    [SerializeField] CharacterMove move;
+    [SerializeField] CharacterJump jump;
+    [SerializeField] CharacterAttack attack;
+    [SerializeField] CharacterHurt hurt;
+    [SerializeField] CharacterBlock block;
+    [SerializeField] CharacterMount mount;
+    [SerializeField] CharacterEquipment equipment;
 
-    [SerializeField] SpriteRenderer charHelmet;
-    [SerializeField] SpriteRenderer charWeapon;
-    [SerializeField] SpriteRenderer charShield;
-
-    [SerializeField] EquipHelmet equipHelmet;
-    [SerializeField] EquipWeapon equipWeapon;
-    [SerializeField] EquipShield equipShield;
-
-    [SerializeField] float MOVE_SPEED = 6f;
-    [SerializeField] float JUMP_VELOCITY = 20f;
-    [SerializeField] float HURT_STUN_TIME = 0.5f;
-    [SerializeField] float HURT_INV_TIME = 3;
-    [SerializeField] float BLINKING_INTERVAL = 0.1f;
-    [SerializeField] Vector2 DAMAGE_PUSH = new Vector2(20,2);
-    [SerializeField] Vector2 BLOCK_PUSH = new Vector2(10,2);
-    bool isJumping = false;
-    bool isHurt = false;
-    bool isMount = false;
-    bool isInvencible = false;
-    bool isBlocking = false;
-    bool isHoldBlocking = false;
-    HorseController mount;
-
-    void Start() {
-        if (equipHelmet != null) SetHelmet(equipHelmet);
-        if (equipWeapon != null) SetWeapon(equipWeapon);
-        if (equipShield != null) SetShield(equipShield);
-    }
-
-    void Update() {
-        if (isMount) {
-            transform.position = mount.GetMount().transform.position; 
-            //transform.position = new Vector2(mount.transform.position.x, mount.transform.position.y + 1);
-            transform.localScale = mount.transform.localScale;
-        }        
-    }
-
-    #region Look
     public void Look(int direction) {
-        if (direction > 0 && !IsLookingRight()) {
-            Turn(1);
-        } else if (direction < 0 && IsLookingRight()) {
-            Turn(-1);
-        }
+        look.Look(direction);
     }
 
-    public void Turn(int direction) {
-        transform.localScale = new Vector2(-direction, 1);
-    }
-
-    bool IsLookingRight() {
-        return transform.localScale.x == -1;
-    }
-    #endregion
-
-    #region Move
     public void Move(int direction) {
-        Look(direction);
-
-        if (!IsBlocking()) {
-            if (IsGrounded()) anim.SetBool("Walk", true);
-            rb.velocity = new Vector2(direction * MOVE_SPEED, rb.velocity.y);
-        }
+        look.Look(direction);
+        if (!block.IsBlocking()) move.Move(direction, jump.IsGrounded());
     }
 
     public void Idle() {
-        anim.SetBool("Walk", false);
+        move.Idle();
     }
-    #endregion
 
-    #region Jump
     public void Jump() {
-        anim.SetBool("Jump", true);
-        isJumping = true;
-        rb.velocity += Vector2.up * JUMP_VELOCITY;
-        StartCoroutine(Raising());
+        jump.Jump();
+    }
+    public bool IsJumping() => !jump.IsGrounded(); //jump.IsJumping();
+    public bool IsGrounded() => jump.IsGrounded();
+
+    public void Attack() {
+        if (!block.IsBlocking()) attack.Attack();
+    }
+    public bool IsAttacking() => attack.IsAttacking();
+
+    public void Hurt(int direction) {
+        if (!hurt.IsInvencible() && !IsBlockSuccess(direction) && mount.IsMount()) mount.Dismount();
+        hurt.Hurt(direction, IsBlockSuccess(direction));
     }
 
-    
-    IEnumerator Raising() {
-        //yield return new WaitUntil(() => !IsGrounded());
-        yield return new WaitForSeconds(0.1f);
-        StartCoroutine(InAir());
-    }
+    public bool IsHurt() => hurt.IsHurt();
 
-    IEnumerator InAir() {
-        yield return new WaitUntil(() => IsGrounded());
-        Landing();
-    }
-
-    void Landing() {
-        anim.SetBool("Jump", false);
-        isJumping = false;
-    }
-    
-    public bool IsGrounded() {
-        float offset = 0.02f;
-        RaycastHit2D raycastHit = Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, 0f, Vector2.down, offset, floorLayer);
-        return raycastHit.collider != null;
-    }
-
-    public bool IsJumping() {
-        return isJumping;
-    }
-    #endregion
-
-    #region Attack
-    public void Slam() {
-        if (!IsBlocking()) {
-            anim.SetLayerWeight(1, 1);
-            anim.SetTrigger("Slam");
-        }
-    }
-
-    public bool IsAttacking() {
-        return anim.GetLayerWeight(1) > 0;
-    }
-    #endregion
-
-    #region Hurt
-    public void Damage(int direction) {
-        //if (!isInvencible && !isBlocking) {
-        if (!isInvencible && !IsBlockSuccess(direction)) {
-            anim.SetLayerWeight(1,0);
-            if (isMount) Dismount();
-            anim.SetTrigger("Hurt");
-            rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y);
-            isHurt = true;
-            isInvencible = true;
-            StartCoroutine(HurtStun());
-            StartCoroutine(HurtInvencible());
-        //} else if (isBlocking) {
-        } else if (IsBlockSuccess(direction)) {
-            rb.velocity = (Vector2.right * BLOCK_PUSH.x * direction + Vector2.up * BLOCK_PUSH.y);
-        }
-    }
-
-    IEnumerator HurtStun() {
-        yield return new WaitForSeconds(HURT_STUN_TIME);
-        isHurt = false;
-    }
-
-    IEnumerator HurtInvencible() {
-        StartCoroutine(BlinkEffect());
-        yield return new WaitForSeconds(HURT_INV_TIME);
-        isInvencible = false;
-    }
-
-
-    IEnumerator BlinkEffect() {
-        float value = 0f;
-        while (isInvencible) {
-            SetAlpha(value);
-            if (value > 0) value = 0;
-            else value = 255;
-            yield return new WaitForSeconds(BLINKING_INTERVAL);
-        }
-        SetAlpha(1);
-    }
-
-    void SetAlpha(float alpha) {
-        SpriteRenderer[] sprites = GetComponentsInChildren<SpriteRenderer>(true);
-        foreach (SpriteRenderer sprite in sprites) {
-            Color color = sprite.color;
-            color.a = alpha;
-            sprite.color = color;
-        }
-    }
-
-    public bool IsHurt() {
-        return isHurt;
-    }
-
-    bool IsBlockSuccess(int hitDirection) {
-        return isBlocking && ((IsLookingRight() && hitDirection < 0) || (!IsLookingRight() && hitDirection > 0));
-    }
-    #endregion
-
-    #region Mount
-    public void Mount(HorseController horse) {
-        //rb.velocity = Vector2.zero;
-        rb.gravityScale = 0;
-        StopAnimation();
-        anim.SetBool("Mount", true);
-        horse.Mount();
-        isMount = true;
-        mount = horse;
-    }
-
-    public void Dismount() {
-        //rb.velocity = Vector2.zero;
-        rb.gravityScale = 4;
-        anim.SetBool("Mount", false);
-        mount.Dismount();
-        isMount = false;
-        mount = null;  
-    }
-
-    public List<HorseController> SearchHorse() {
-        List<HorseController> near = new List<HorseController>();
-        HorseController[] horses = FindObjectsOfType<HorseController>();
-        foreach (HorseController horse in horses) {
-            //if (Mathf.Abs(horse.transform.position.x - transform.position.x) < 2) {
-            if (Vector2.Distance(horse.transform.position, transform.position) < 2) {
-                near.Add(horse);
-            }
-        }
-        return near;
-    }
-
-    public bool IsMount() {
-        return isMount;
-    }
-
-    public HorseController GetMount() {
-        return mount;
-    }
-    #endregion
-
-    #region Block
     public void Block() {
-        anim.SetBool("Block", true);
-        isBlocking = true;
-    }
-
-    public void HoldBlock() {
-        isHoldBlocking = true;
+        block.Block();
     }
 
     public void Unblock() {
-        anim.SetBool("Block", false);
-        isBlocking = false;
-        isHoldBlocking = false;
-    } 
-
-    public bool IsBlocking() {
-        return isBlocking;
+        block.Unblock();
     }
 
-    public bool IsHoldBlocking() {
-        return isHoldBlocking;
+    public bool IsBlocking() => block.IsBlocking();
+
+    bool IsBlockSuccess(int hitDirection) {
+        return block.IsBlocking() && ((look.IsLookingRight() && hitDirection < 0) || (!look.IsLookingRight() && hitDirection > 0));
     }
-    #endregion
+
+    public void Mount() {
+        List<HorseController> nearHorses = mount.SearchHorse();
+        if (nearHorses.Count > 0) {
+            HorseController horse = nearHorses[0];
+            StopAnimation();
+            mount.Mount(horse);
+        }
+    }
+
+    public void Dismount() {
+        mount.Dismount();
+    }
+
+    public HorseController GetMount() => mount.GetMount();
+
+    public bool IsMount() => mount.IsMount();
 
     void StopAnimation() {
         anim.SetBool("Walk", false);
@@ -268,23 +91,5 @@ public class CharacterController : MonoBehaviour {
             anim.GetBool("Jump") ||
             anim.GetBool("Mount") ||
             anim.GetBool("Block");
-    }
-
-
-    void SetHelmet(EquipHelmet helmet) {
-        charHelmet.sprite = helmet.image;
-        charHelmet.transform.localPosition = new Vector2(helmet.xOffset, helmet.yOffset);
-        charHair.enabled = !helmet.hideHair;
-        charFacialHair.enabled = !helmet.hideFacialHair;
-    }
-
-    void SetWeapon(EquipWeapon weapon) {
-        charWeapon.sprite = weapon.image;
-        charWeapon.transform.localPosition = new Vector2(weapon.xOffset, weapon.yOffset);
-    }
-
-    void SetShield(EquipShield shield) {
-        charShield.sprite = shield.image;
-        charShield.transform.localPosition = new Vector2(shield.xOffset, shield.yOffset);
     }
 }

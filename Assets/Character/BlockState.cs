@@ -6,8 +6,8 @@ public class BlockState : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        CharacterController character = animator.GetComponent<CharacterController>();
-        character.HoldBlock();
+        CharacterBlock characterBlock = animator.GetComponent<CharacterBlock>();
+        characterBlock.HoldBlock();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
