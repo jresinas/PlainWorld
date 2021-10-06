@@ -9,19 +9,43 @@ public class AIControl : MonoBehaviour {
     [SerializeField] bool enemy = true;
     [SerializeField] bool ally = false;
 
+    // Increment for attacking level
+    float ATA_LEVEL_INC = 0.005f;
+    // Attack decrement during counter attack
+    float ATA_COUNT_DEC = 0.04f;
+    // Increment for defense level
+    float DEF_LEVEL_INC = 0.014f;
+    // Defense increment during combat distance
+    float DEF_COMBAT_INC = 0.001f;
+
+    [SerializeField] float ATA_LEVEL = 5;
+    [SerializeField] float DEF_LEVEL = 5;
+
+    float defenseCombatDistanceValue;
+    float defenseCarefulDistanceValue;
+    float attackValue;
+    float counterAttackValue;
 
     [SerializeField] float MIDDLE_DISTANCE = 40f;
     [SerializeField] float CAREFUL_DISTANCE = 15f;
-    [SerializeField] float NEAR_DISTANCE = 5f; //5f;
-    [SerializeField] float MAX_ATTACK_DISTANCE = 6f; //5.2f;
-    [SerializeField] float MIN_ATTACK_DISTANCE = 2f;
+    [SerializeField] float NEAR_DISTANCE = 3f; // 5f; //5f;
+    [SerializeField] float MAX_ATTACK_DISTANCE = 4.8f; //6f; //5.2f;
+    [SerializeField] float MIN_ATTACK_DISTANCE = 2.5f; //2f;
+
+    void Start() {
+        defenseCombatDistanceValue = DEF_LEVEL * DEF_LEVEL_INC + DEF_COMBAT_INC;
+        defenseCarefulDistanceValue = DEF_LEVEL * DEF_LEVEL_INC;
+        attackValue = ATA_LEVEL * ATA_LEVEL_INC;
+        counterAttackValue = ATA_LEVEL * ATA_LEVEL_INC - ATA_COUNT_DEC;
+    }
 
     private void Update() {
         lookingAt = player.transform;
         if (!character.IsHurt()) {
-            character.Unblock();
+            CharacterController enemyChar = lookingAt.GetComponent<CharacterController>();
+            if (!enemyChar.IsAttacking()) character.Unblock();
             //if (character.IsBlocking()) character.Unblock();
-            
+
             if (enemy) {
                 if (IsAttackable(lookingAt)) {
                     Look(lookingAt);
@@ -57,9 +81,11 @@ public class AIControl : MonoBehaviour {
         CharacterController enemy = target.GetComponent<CharacterController>();
         float rnd = Random.Range(0f, 1f);
         if (enemy.IsAttacking()) {
-            if (rnd > 0.1f) Block();
+            //if (rnd > 0.925f) Block();
+            //else Follow2(target);
+            //DefenseAction(false, () => { Follow2(target); });
+            if (rnd < defenseCarefulDistanceValue) Block();
             else Follow(target);
-            //Block();
         } else {
             Follow(target);
         }
@@ -79,27 +105,20 @@ public class AIControl : MonoBehaviour {
         CharacterController enemy = target.GetComponent<CharacterController>();
         float rnd = Random.Range(0f, 1f);
         if (enemy.IsAttacking()) {
-            if (rnd > 0.2f) Block();
-            else if (rnd > 0.196f) MeleeAttack();
-            //else if (rnd > 0.2f) MeleeAttack();
+            //if (rnd > 0.925f) Block();
+            //else if (rnd > 0.921f) MeleeAttack();
+            //AttackDefenseAction(true);
+            if (rnd < defenseCombatDistanceValue) Block();
+            else if (rnd < defenseCombatDistanceValue + counterAttackValue) MeleeAttack();
         } else {
-            if (rnd > 0.96f) MeleeAttack();
-            //if (rnd > 0.3f) MeleeAttack();
+            //if (rnd > 0.96f) MeleeAttack();
+            //AttackAction();
+            if (rnd < attackValue) MeleeAttack();
         }
-
-        /*
-        if (enemy.IsAttacking()) {
-            if (rnd > 0.3f) Block();
-            else if (rnd > 0.2f) MeleeAttack();
-        } else if (enemy.IsBlocking()) {
-            if (rnd > 0.9) MeleeAttack();
-        } else {
-            if (rnd > 0.3f) MeleeAttack();
-        }
-        */
     }
 
     void Block() {
+        character.Idle();
         character.Block();
     }
 
@@ -128,4 +147,37 @@ public class AIControl : MonoBehaviour {
         if (target.position.x > transform.position.x) return 1;
         else return 0;
     }
+
+    /*
+    void DefenseAction(bool isCombatPosition, System.Action callbackMethod = null) {
+        float rnd = Random.Range(0f, 1f);
+        if (isCombatPosition) {
+            if (rnd < (DEF_LEVEL * DEF_LEVEL_INC + DEF_COMBAT_INC)) Block();
+            else if (callbackMethod != null) callbackMethod.Invoke();
+        } else {
+            if (rnd < (DEF_LEVEL * DEF_LEVEL_INC)) Block();
+            else if (callbackMethod != null) callbackMethod.Invoke();
+        }
+    }
+
+    void AttackAction(System.Action callbackMethod = null) {
+        Debug.Log(ATA_LEVEL * ATA_LEVEL_INC);
+        float rnd = Random.Range(0f, 1f);
+        if (rnd < (ATA_LEVEL * ATA_LEVEL_INC)) MeleeAttack();
+        else if (callbackMethod != null) callbackMethod.Invoke();
+    }
+
+    void AttackDefenseAction(bool isCombatPosition, System.Action callbackMethod = null) {
+        float rnd = Random.Range(0f, 1f);
+        if (isCombatPosition) {
+            if (rnd < (DEF_LEVEL * DEF_LEVEL_INC + DEF_COMBAT_INC)) Block();
+            else if (rnd < (DEF_LEVEL * DEF_LEVEL_INC + DEF_COMBAT_INC) + (ATA_LEVEL * ATA_LEVEL_INC)) MeleeAttack();
+            else if (callbackMethod != null) callbackMethod.Invoke();
+        } else {
+            if (rnd < (DEF_LEVEL * DEF_LEVEL_INC)) Block();
+            else if (rnd < (DEF_LEVEL * DEF_LEVEL_INC) + (ATA_LEVEL * ATA_LEVEL_INC)) MeleeAttack();
+            else if (callbackMethod != null) callbackMethod.Invoke();
+        }
+    }
+    */
 }
