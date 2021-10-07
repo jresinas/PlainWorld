@@ -2370,8 +2370,8 @@ MonoBehaviour:
   player: {fileID: 1033537334}
   enemy: 1
   ally: 0
-  ATA_LEVEL: 3
-  DEF_LEVEL: 3
+  ATA_LEVEL: 8
+  DEF_LEVEL: 8
   MIDDLE_DISTANCE: 40
   CAREFUL_DISTANCE: 15
   NEAR_DISTANCE: 3
@@ -3569,7 +3569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6555ef5e5a92a4da6f681bf89443b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 0}
+  anim: {fileID: 0}
 --- !u!61 &956931639
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4085,7 +4085,7 @@ MonoBehaviour:
   charWeapon: {fileID: 14488445}
   charShield: {fileID: 853115860}
   equipHelmet: {fileID: 0}
-  equipWeapon: {fileID: 11400000, guid: 428c15bc65e85b644a9d417556d90372, type: 2}
+  equipWeapon: {fileID: 11400000, guid: d49d6051798271c418af03e87a5d0af7, type: 2}
   equipShield: {fileID: 11400000, guid: afac72e08e17f2c46beb43330634b02f, type: 2}
   charHair: {fileID: 363947807}
   charFacialHair: {fileID: 214049439}
@@ -7585,7 +7585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6555ef5e5a92a4da6f681bf89443b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 0}
+  anim: {fileID: 0}
 --- !u!61 &2069922748
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7810,7 +7810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6555ef5e5a92a4da6f681bf89443b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 0}
+  anim: {fileID: 0}
 --- !u!61 &2139618943
 BoxCollider2D:
   m_ObjectHideFlags: 0

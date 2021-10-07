@@ -13,6 +13,7 @@ public class CharacterAttack : MonoBehaviour {
             string animationName = weapon.animationType.ToString();
             int animationLayer = GetWeaponAnimationLayer();
             anim.SetLayerWeight(animationLayer, 1);
+            anim.SetFloat("AttackSpeed", equipedWeapon.animationSpeed);
             anim.SetTrigger(animationName);
         }
     }
@@ -25,8 +26,10 @@ public class CharacterAttack : MonoBehaviour {
     public void CreateEffect() {
         GameObject effectObj = Instantiate(equipedWeapon.effect, transform.position + Vector3.right * equipedWeapon.xEffectOffset * transform.localScale.x + Vector3.up * equipedWeapon.yEffectOffset, transform.rotation, transform);
         AttackController attack = effectObj.GetComponent<AttackController>();
-        attack.character = transform;
-        Destroy(effectObj, 0.3f);
+        //attack.character = transform;
+        attack.Initialize(transform, equipedWeapon.animationSpeed);
+        //Destroy(effectObj, 0.3f);
+        Destroy(effectObj, 0.6f/equipedWeapon.animationSpeed);
     }
 
     int GetWeaponAnimationLayer() {

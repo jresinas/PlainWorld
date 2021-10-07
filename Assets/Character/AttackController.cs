@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AttackController : MonoBehaviour {
-    public Transform character;
+    [SerializeField] Animator anim;
+    Transform character;
+
+    public void Initialize(Transform character, float speed) {
+        this.character = character;
+        anim.SetFloat("EffectSpeed", speed);
+    }
 
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.gameObject != character.gameObject) {

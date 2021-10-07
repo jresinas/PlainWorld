@@ -11,7 +11,7 @@ public enum WeaponType {
 }
 
 public enum AnimationType {
-    Slam
+    Crush
 }
 
 [CreateAssetMenu(fileName = "Weapon", menuName = "Equip/New Weapon", order = 51)]
@@ -22,6 +22,7 @@ public class EquipWeapon : ScriptableObject {
     public WeaponType type;
 
     public GameObject effect;
+    public float animationSpeed;
     public AnimationType animationType;
     public float xEffectOffset;
     public float yEffectOffset;

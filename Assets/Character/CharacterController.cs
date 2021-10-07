@@ -48,7 +48,7 @@ public class CharacterController : MonoBehaviour {
     public bool IsHurt() => hurt.IsHurt();
 
     public void Block() {
-        if (!IsBusy()) block.Block();
+        if (!IsBusy() && !IsAttacking()) block.Block();
     }
 
     public void Unblock() {

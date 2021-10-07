@@ -17,6 +17,7 @@ MonoBehaviour:
   yOffset: 0.9
   type: 4
   effect: {fileID: 5360863035610048331, guid: 324255558cf1f8f4dba9c9b15433d304, type: 3}
+  animationSpeed: 1
   animationType: 0
   xEffectOffset: -4
   yEffectOffset: 1.55
