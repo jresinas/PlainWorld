@@ -36,4 +36,8 @@ public class CharacterEquipment : MonoBehaviour {
         charShield.sprite = shield.image;
         charShield.transform.localPosition = new Vector2(shield.xOffset, shield.yOffset);
     }
+
+    public EquipWeapon GetWeapon() {
+        return equipWeapon;
+    }
 }

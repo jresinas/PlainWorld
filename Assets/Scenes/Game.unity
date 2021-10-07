@@ -2206,7 +2206,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 747635309}
-  effect: {fileID: 5360863035610048331, guid: 324255558cf1f8f4dba9c9b15433d304, type: 3}
 --- !u!114 &747635306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2371,12 +2370,12 @@ MonoBehaviour:
   player: {fileID: 1033537334}
   enemy: 1
   ally: 0
-  ATA_LEVEL: 10
-  DEF_LEVEL: 10
+  ATA_LEVEL: 3
+  DEF_LEVEL: 3
   MIDDLE_DISTANCE: 40
   CAREFUL_DISTANCE: 15
   NEAR_DISTANCE: 3
-  MAX_ATTACK_DISTANCE: 5
+  MAX_ATTACK_DISTANCE: 4.9
   MIN_ATTACK_DISTANCE: 2.5
 --- !u!4 &747635315
 Transform:
@@ -4051,7 +4050,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 1033537332}
-  effect: {fileID: 5360863035610048331, guid: 324255558cf1f8f4dba9c9b15433d304, type: 3}
 --- !u!114 &1033537343
 MonoBehaviour:
   m_ObjectHideFlags: 0

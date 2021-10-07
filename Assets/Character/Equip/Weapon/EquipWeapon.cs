@@ -10,10 +10,19 @@ public enum WeaponType {
     Staff
 }
 
+public enum AnimationType {
+    Slam
+}
+
 [CreateAssetMenu(fileName = "Weapon", menuName = "Equip/New Weapon", order = 51)]
 public class EquipWeapon : ScriptableObject {
     public Sprite image;
     public float xOffset;
     public float yOffset;
     public WeaponType type;
+
+    public GameObject effect;
+    public AnimationType animationType;
+    public float xEffectOffset;
+    public float yEffectOffset;
 }

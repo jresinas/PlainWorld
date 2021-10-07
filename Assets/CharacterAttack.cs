@@ -4,25 +4,35 @@ using UnityEngine;
 
 public class CharacterAttack : MonoBehaviour {
     [SerializeField] Animator anim;
-    [SerializeField] GameObject effect;
+    //[SerializeField] GameObject effect;
+    EquipWeapon equipedWeapon;
 
-    public void Attack() {
-        //if (!IsBlocking()) {
-            anim.SetLayerWeight(1, 1);
-            anim.SetTrigger("Slam");
-        //}
+    public void Attack(EquipWeapon weapon) {
+        equipedWeapon = weapon;
+        if (weapon != null) {
+            string animationName = weapon.animationType.ToString();
+            int animationLayer = GetWeaponAnimationLayer();
+            anim.SetLayerWeight(animationLayer, 1);
+            anim.SetTrigger(animationName);
+        }
     }
 
     public bool IsAttacking() {
-        return anim.GetLayerWeight(1) > 0;
+        int animationLayer = GetWeaponAnimationLayer();
+        return anim.GetLayerWeight(animationLayer) > 0;
     }
 
     public void CreateEffect() {
-        //GameObject effectObj = Instantiate(effect, transform.position + Vector3.right * -2.8f * transform.localScale.x + Vector3.up * 1.55f, transform.rotation);
-        //effectObj.transform.localScale = transform.localScale;
-        GameObject effectObj = Instantiate(effect, transform.position + Vector3.right * -2.8f * transform.localScale.x + Vector3.up * 1.55f, transform.rotation, transform);
+        GameObject effectObj = Instantiate(equipedWeapon.effect, transform.position + Vector3.right * equipedWeapon.xEffectOffset * transform.localScale.x + Vector3.up * equipedWeapon.yEffectOffset, transform.rotation, transform);
         AttackController attack = effectObj.GetComponent<AttackController>();
         attack.character = transform;
-        Destroy(effectObj, 0.5f);
+        Destroy(effectObj, 0.3f);
+    }
+
+    int GetWeaponAnimationLayer() {
+        if (equipedWeapon != null) {
+            string animationName = equipedWeapon.animationType.ToString();
+            return anim.GetLayerIndex(animationName);
+        } else return 0;
     }
 }

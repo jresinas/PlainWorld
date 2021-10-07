@@ -35,13 +35,12 @@ public class CharacterController : MonoBehaviour {
     }
 
     public void Attack() {
-        if (!block.IsBlocking() && !IsAttacking()) attack.Attack();
+        if (!block.IsBlocking() && !IsAttacking()) attack.Attack(equipment.GetWeapon()); ;
     }
 
     public bool IsAttacking() => attack.IsAttacking();
 
     public void Hurt(int direction) {
-        Debug.Log("HURT");
         if (!hurt.IsInvencible() && !IsBlockSuccess(direction) && mount.IsMount()) mount.Dismount();
         hurt.Hurt(direction, IsBlockSuccess(direction));
     }
