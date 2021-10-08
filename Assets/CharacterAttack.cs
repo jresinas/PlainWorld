@@ -10,11 +10,12 @@ public class CharacterAttack : MonoBehaviour {
     public void Attack(EquipWeapon weapon) {
         equipedWeapon = weapon;
         if (weapon != null) {
-            string animationName = weapon.animationType.ToString();
+            //string animationName = weapon.animationType.ToString();
             int animationLayer = GetWeaponAnimationLayer();
             anim.SetLayerWeight(animationLayer, 1);
             anim.SetFloat("AttackSpeed", equipedWeapon.animationSpeed);
-            anim.SetTrigger(animationName);
+            //anim.SetTrigger(animationName);
+            anim.SetTrigger("Attack");
         }
     }
 

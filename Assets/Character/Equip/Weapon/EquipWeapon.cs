@@ -11,7 +11,8 @@ public enum WeaponType {
 }
 
 public enum AnimationType {
-    Crush
+    Crush,
+    Pierce
 }
 
 [CreateAssetMenu(fileName = "Weapon", menuName = "Equip/New Weapon", order = 51)]

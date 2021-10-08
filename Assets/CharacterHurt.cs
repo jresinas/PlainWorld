@@ -19,6 +19,8 @@ public class CharacterHurt : MonoBehaviour {
         //if (!isInvencible && !isBlocking) {
         if (!isInvencible && !isBlockSuccess) {
             anim.SetLayerWeight(1, 0);
+            anim.SetLayerWeight(2, 0);
+            anim.SetTrigger("Hurt");
             //if (isMount) Dismount();
             rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y);
             isHurt = true;
