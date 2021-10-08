@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackController : MonoBehaviour {
+public class AttackEffectController : MonoBehaviour {
     [SerializeField] Animator anim;
     Transform character;
 

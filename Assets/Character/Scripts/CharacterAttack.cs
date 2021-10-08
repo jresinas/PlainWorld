@@ -26,7 +26,7 @@ public class CharacterAttack : MonoBehaviour {
 
     public void CreateEffect() {
         GameObject effectObj = Instantiate(equipedWeapon.effect, transform.position + Vector3.right * equipedWeapon.xEffectOffset * transform.localScale.x + Vector3.up * equipedWeapon.yEffectOffset, transform.rotation, transform);
-        AttackController attack = effectObj.GetComponent<AttackController>();
+        AttackEffectController attack = effectObj.GetComponent<AttackEffectController>();
         //attack.character = transform;
         attack.Initialize(transform, equipedWeapon.animationSpeed);
         //Destroy(effectObj, 0.3f);
