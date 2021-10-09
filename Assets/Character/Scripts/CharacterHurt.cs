@@ -15,22 +15,22 @@ public class CharacterHurt : MonoBehaviour {
     bool isInvencible = false;
     bool isHurt = false;
 
-    public void Hurt(int direction, bool isBlockSuccess) {
-        //if (!isInvencible && !isBlocking) {
+    public int Hurt(int direction, bool isBlockSuccess, bool softHit) {
         if (!isInvencible && !isBlockSuccess) {
-            anim.SetLayerWeight(1, 0);
-            anim.SetLayerWeight(2, 0);
+            StopAttack();
             anim.SetTrigger("Hurt");
-            //if (isMount) Dismount();
-            rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y);
+            if (!softHit) rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y);
+            else rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y)/2;
             isHurt = true;
             isInvencible = true;
             StartCoroutine(HurtStun());
             StartCoroutine(HurtInvencible());
-            //} else if (isBlocking) {
+            return 1;
         } else if (isBlockSuccess) {
-            rb.velocity = (Vector2.right * BLOCK_PUSH.x * direction + Vector2.up * BLOCK_PUSH.y);
-        }
+            if (!softHit) rb.velocity = (Vector2.right * BLOCK_PUSH.x * direction + Vector2.up * BLOCK_PUSH.y);
+            else rb.velocity = (Vector2.right * BLOCK_PUSH.x * direction + Vector2.up * BLOCK_PUSH.y)/2;
+            return 0;
+        } else return -1;
     }
 
     IEnumerator HurtStun() {
@@ -71,5 +71,12 @@ public class CharacterHurt : MonoBehaviour {
 
     public bool IsInvencible() {
         return isInvencible;
+    }
+
+    void StopAttack() {
+        for (int i = 1; i < anim.layerCount; i++) {
+            anim.SetLayerWeight(i, 0);
+        }
+        anim.ResetTrigger("Attack");
     }
 }

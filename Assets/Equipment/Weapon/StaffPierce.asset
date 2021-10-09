@@ -15,9 +15,11 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: 75c81b196f66a1945bab94428915991a, type: 3}
   xOffset: 0
   yOffset: 0.9
-  type: 4
+  type: 0
+  layerOrder: -4
   effect: {fileID: 5360863035610048331, guid: e9219932a208df44286c96a38404d8c1, type: 3}
-  animationSpeed: 1
+  animationSpeed: 1.5
   animationType: 1
   xEffectOffset: -3.4
   yEffectOffset: -0.5
+  lifeTime: 0.3

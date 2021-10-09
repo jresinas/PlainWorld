@@ -30,6 +30,7 @@ public class CharacterEquipment : MonoBehaviour {
     void SetWeapon(EquipWeapon weapon) {
         charWeapon.sprite = weapon.image;
         charWeapon.transform.localPosition = new Vector2(weapon.xOffset, weapon.yOffset);
+        charWeapon.sortingOrder = weapon.layerOrder;
     }
 
     void SetShield(EquipShield shield) {

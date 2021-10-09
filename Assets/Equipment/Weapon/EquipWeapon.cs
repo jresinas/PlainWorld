@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum WeaponType {
-    MeleeCrush,
-    MeleeSlash,
-    MeleePierce,
-    Wand,
-    Staff
+    Melee,
+    Range
 }
 
 public enum AnimationType {
     Crush,
     Pierce,
-    Slash
+    Slash,
+    Bow
 }
 
 [CreateAssetMenu(fileName = "Weapon", menuName = "Equip/New Weapon", order = 51)]
@@ -22,10 +20,12 @@ public class EquipWeapon : ScriptableObject {
     public float xOffset;
     public float yOffset;
     public WeaponType type;
+    public int layerOrder;
 
     public GameObject effect;
     public float animationSpeed;
     public AnimationType animationType;
     public float xEffectOffset;
     public float yEffectOffset;
+    public float lifeTime;
 }

@@ -40,9 +40,9 @@ public class CharacterController : MonoBehaviour {
 
     public bool IsAttacking() => attack.IsAttacking();
 
-    public void Hurt(int direction) {
-        if (!hurt.IsInvencible() && !IsBlockSuccess(direction) && mount.IsMount()) mount.Dismount();
-        hurt.Hurt(direction, IsBlockSuccess(direction));
+    public int Hurt(int direction, bool softHit = false) {
+        if (!softHit && !hurt.IsInvencible() && !IsBlockSuccess(direction) && mount.IsMount()) mount.Dismount();
+        return hurt.Hurt(direction, IsBlockSuccess(direction), softHit);
     }
 
     public bool IsHurt() => hurt.IsHurt();

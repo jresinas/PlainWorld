@@ -25,12 +25,25 @@ public class CharacterAttack : MonoBehaviour {
     }
 
     public void CreateEffect() {
-        GameObject effectObj = Instantiate(equipedWeapon.effect, transform.position + Vector3.right * equipedWeapon.xEffectOffset * transform.localScale.x + Vector3.up * equipedWeapon.yEffectOffset, transform.rotation, transform);
-        AttackEffectController attack = effectObj.GetComponent<AttackEffectController>();
+        GameObject effectObj = null;
+        float speed = 0;
+        switch (equipedWeapon.type) {
+            case WeaponType.Melee:
+                effectObj = Instantiate(equipedWeapon.effect, transform.position + Vector3.right * equipedWeapon.xEffectOffset * transform.localScale.x + Vector3.up * equipedWeapon.yEffectOffset, transform.rotation, transform);
+                speed = equipedWeapon.animationSpeed;
+                break;
+            case WeaponType.Range:
+                effectObj = Instantiate(equipedWeapon.effect, transform.position + Vector3.right * equipedWeapon.xEffectOffset * transform.localScale.x + Vector3.up * equipedWeapon.yEffectOffset, transform.rotation);
+                speed = 40;
+                break;
+        }
+
+        IAttackEffect attackEffect = effectObj.GetComponent<IAttackEffect>();
+        attackEffect.Initialize(transform, speed);
+
         //attack.character = transform;
-        attack.Initialize(transform, equipedWeapon.animationSpeed);
         //Destroy(effectObj, 0.3f);
-        Destroy(effectObj, 0.6f/equipedWeapon.animationSpeed);
+        Destroy(effectObj, equipedWeapon.lifeTime);
     }
 
     int GetWeaponAnimationLayer() {

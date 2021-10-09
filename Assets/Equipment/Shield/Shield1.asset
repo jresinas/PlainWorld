@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 21300000, guid: 9650e2367a6a76044848666bffd9d8e2, type: 3}
   xOffset: 0.5
-  yOffset: -0.7
+  yOffset: 0.3
