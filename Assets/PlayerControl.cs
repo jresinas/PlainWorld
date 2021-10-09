@@ -41,7 +41,7 @@ public class PlayerControl : MonoBehaviour {
                 character.Unblock();
             }
         } else if (!character.IsHurt() && character.IsMount()) {
-            HorseController mount = character.GetMount();
+            MountController mount = character.GetMount();
             if (inputHorizontal < -THRESHOLD_HORIZONTAL_INPUT) {
                 mount.Move(-1);
             } else if (inputHorizontal > THRESHOLD_HORIZONTAL_INPUT) {

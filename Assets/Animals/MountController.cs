@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HorseController : MonoBehaviour {
+public class MountController : MonoBehaviour {
     [SerializeField] Animator anim;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] BoxCollider2D collider;

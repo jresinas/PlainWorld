@@ -7,7 +7,7 @@ public class CharacterMount : MonoBehaviour {
     [SerializeField] Animator anim;
 
     bool isMount = false;
-    HorseController mount;
+    MountController mount;
 
     void Update() {
         if (isMount) {
@@ -16,7 +16,7 @@ public class CharacterMount : MonoBehaviour {
         }
     }
 
-    public void Mount(HorseController horse) {
+    public void Mount(MountController horse) {
         rb.gravityScale = 0;
         //StopAnimation();
         anim.SetBool("Mount", true);
@@ -33,10 +33,10 @@ public class CharacterMount : MonoBehaviour {
         mount = null;
     }
 
-    public List<HorseController> SearchHorse() {
-        List<HorseController> near = new List<HorseController>();
-        HorseController[] horses = FindObjectsOfType<HorseController>();
-        foreach (HorseController horse in horses) {
+    public List<MountController> SearchHorse() {
+        List<MountController> near = new List<MountController>();
+        MountController[] horses = FindObjectsOfType<MountController>();
+        foreach (MountController horse in horses) {
             if (Vector2.Distance(horse.transform.position, transform.position) < 2) {
                 near.Add(horse);
             }
@@ -48,7 +48,7 @@ public class CharacterMount : MonoBehaviour {
         return isMount;
     }
 
-    public HorseController GetMount() {
+    public MountController GetMount() {
         return mount;
     }
 }

@@ -60,9 +60,9 @@ public class CharacterController : MonoBehaviour {
     }
 
     public void Mount() {
-        List<HorseController> nearHorses = mount.SearchHorse();
+        List<MountController> nearHorses = mount.SearchHorse();
         if (nearHorses.Count > 0) {
-            HorseController horse = nearHorses[0];
+            MountController horse = nearHorses[0];
             StopAnimation();
             mount.Mount(horse);
         }
@@ -72,7 +72,7 @@ public class CharacterController : MonoBehaviour {
         mount.Dismount();
     }
 
-    public HorseController GetMount() => mount.GetMount();
+    public MountController GetMount() => mount.GetMount();
 
     public bool IsMount() => mount.IsMount();
 
