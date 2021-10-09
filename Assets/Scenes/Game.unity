@@ -4184,7 +4184,7 @@ MonoBehaviour:
   charWeapon: {fileID: 14488445}
   charShield: {fileID: 853115860}
   equipHelmet: {fileID: 0}
-  equipWeapon: {fileID: 11400000, guid: 3cd57ac4bb61e31438c8eeafadb5eece, type: 2}
+  equipWeapon: {fileID: 11400000, guid: e09edc973687bf546a8d53614462258b, type: 2}
   equipShield: {fileID: 11400000, guid: afac72e08e17f2c46beb43330634b02f, type: 2}
   charHair: {fileID: 363947807}
   charFacialHair: {fileID: 214049439}

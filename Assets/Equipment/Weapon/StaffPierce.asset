@@ -18,7 +18,7 @@ MonoBehaviour:
   type: 0
   layerOrder: -4
   effect: {fileID: 5360863035610048331, guid: e9219932a208df44286c96a38404d8c1, type: 3}
-  animationSpeed: 1.5
+  animationSpeed: 1
   animationType: 1
   xEffectOffset: -3.4
   yEffectOffset: -0.5
