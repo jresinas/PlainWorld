@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1140377801371798367}
   m_Layer: 9
   m_Name: SlashEffect
-  m_TagString: Untagged
+  m_TagString: AttackEffect
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,7 +110,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 2.788094, y: 3.5625362}
-  m_EdgeRadius: 3
+  m_EdgeRadius: 0
 --- !u!114 &5360863035610048335
 MonoBehaviour:
   m_ObjectHideFlags: 0

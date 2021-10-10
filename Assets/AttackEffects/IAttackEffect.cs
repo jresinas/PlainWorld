@@ -4,4 +4,6 @@ using UnityEngine;
 
 public interface IAttackEffect {
     public void Initialize(Transform character, float speed);
+
+    public Transform GetOwner();
 }

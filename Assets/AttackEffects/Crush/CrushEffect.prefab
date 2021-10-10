@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 5360863035610048335}
   - component: {fileID: 1140377801371798367}
   m_Layer: 9
-  m_Name: Effect
-  m_TagString: Untagged
+  m_Name: CrushEffect
+  m_TagString: AttackEffect
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class CharacterAttack : MonoBehaviour {
     [SerializeField] Animator anim;
     //[SerializeField] GameObject effect;
     EquipWeapon equipedWeapon;
+    public bool isEndingAttack = false;
 
     public void Attack(EquipWeapon weapon) {
         equipedWeapon = weapon;
@@ -24,7 +26,12 @@ public class CharacterAttack : MonoBehaviour {
         return anim.GetLayerWeight(animationLayer) > 0;
     }
 
+    public bool IsEndingAttack() {
+        return isEndingAttack;
+    }
+
     public void CreateEffect() {
+        isEndingAttack = true;
         GameObject effectObj = null;
         float speed = 0;
         switch (equipedWeapon.type) {
@@ -51,5 +58,17 @@ public class CharacterAttack : MonoBehaviour {
             string animationName = equipedWeapon.animationType.ToString();
             return anim.GetLayerIndex(animationName);
         } else return 0;
+    }
+
+    public void StopAttack() {
+        for (int i = 1; i < anim.layerCount; i++) {
+            anim.SetLayerWeight(i, 0);
+        }
+        anim.ResetTrigger("Attack");
+        EndAttack();
+    }
+
+    public void EndAttack() {
+        isEndingAttack = false;
     }
 }

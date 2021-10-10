@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class CharacterBlock : MonoBehaviour {
     [SerializeField] Animator anim;
-
+    bool isBlocking = false;
     bool isHoldBlocking = false;
 
     public void Block() {
         anim.SetBool("Block", true);
+        isBlocking = true;
     }
 
     public void HoldBlock() {
         isHoldBlocking = true;
+    }
+
+    public void EndBlock() {
+        isBlocking = false;
     }
 
     public void Unblock() {
@@ -21,7 +26,8 @@ public class CharacterBlock : MonoBehaviour {
     }
 
     public bool IsBlocking() {
-        return anim.GetBool("Block");
+        //return anim.GetBool("Block");
+        return isBlocking;
     }
 
     public bool IsHoldBlocking() {

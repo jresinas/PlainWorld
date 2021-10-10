@@ -28,4 +28,8 @@ public class MeleeEffectController : MonoBehaviour, IAttackEffect {
             }
         }
     }
+
+    public Transform GetOwner() {
+        return character;
+    }
 }

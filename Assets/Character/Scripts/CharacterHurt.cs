@@ -17,7 +17,7 @@ public class CharacterHurt : MonoBehaviour {
 
     public int Hurt(int direction, bool isBlockSuccess, bool softHit) {
         if (!isInvencible && !isBlockSuccess) {
-            StopAttack();
+            //StopAttack();
             anim.SetTrigger("Hurt");
             if (!softHit) rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y);
             else rb.velocity = (Vector2.right * DAMAGE_PUSH.x * direction + Vector2.up * DAMAGE_PUSH.y)/2;
@@ -71,12 +71,5 @@ public class CharacterHurt : MonoBehaviour {
 
     public bool IsInvencible() {
         return isInvencible;
-    }
-
-    void StopAttack() {
-        for (int i = 1; i < anim.layerCount; i++) {
-            anim.SetLayerWeight(i, 0);
-        }
-        anim.ResetTrigger("Attack");
     }
 }

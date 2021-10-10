@@ -39,6 +39,7 @@ public class CharacterController : MonoBehaviour {
     }
 
     public bool IsAttacking() => attack.IsAttacking();
+    public bool IsEndingAttack() => attack.IsEndingAttack();
 
     public int Hurt(int direction, bool softHit = false) {
         if (!softHit && !hurt.IsInvencible() && !IsBlockSuccess(direction) && mount.IsMount()) mount.Dismount();
@@ -88,5 +89,12 @@ public class CharacterController : MonoBehaviour {
             anim.GetBool("Jump") ||
             anim.GetBool("Mount") ||
             anim.GetBool("Block");
+    }
+
+    public void ResetState() {
+        StopAnimation();
+        block.Unblock();
+        block.EndBlock();
+        attack.StopAttack();
     }
 }

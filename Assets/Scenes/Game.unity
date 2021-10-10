@@ -2511,7 +2511,8 @@ MonoBehaviour:
   enemy: 1
   ally: 0
   ATA_LEVEL: 5
-  DEF_LEVEL: 3
+  DEF_LEVEL: 10
+  DANGER_DISTANCE: 7
   MIDDLE_DISTANCE: 40
   CAREFUL_DISTANCE: 15
   NEAR_DISTANCE: 3
@@ -4184,7 +4185,7 @@ MonoBehaviour:
   charWeapon: {fileID: 14488445}
   charShield: {fileID: 853115860}
   equipHelmet: {fileID: 0}
-  equipWeapon: {fileID: 11400000, guid: e09edc973687bf546a8d53614462258b, type: 2}
+  equipWeapon: {fileID: 11400000, guid: a653644ef5611e64b9263739e27532a3, type: 2}
   equipShield: {fileID: 11400000, guid: afac72e08e17f2c46beb43330634b02f, type: 2}
   charHair: {fileID: 363947807}
   charFacialHair: {fileID: 214049439}
@@ -7105,6 +7106,7 @@ MonoBehaviour:
   ally: 0
   ATA_LEVEL: 5
   DEF_LEVEL: 5
+  DANGER_DISTANCE: 7
   MIDDLE_DISTANCE: 40
   CAREFUL_DISTANCE: 15
   NEAR_DISTANCE: 5

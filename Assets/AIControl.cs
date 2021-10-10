@@ -26,6 +26,7 @@ public class AIControl : MonoBehaviour {
     float attackValue;
     float counterAttackValue;
 
+    [SerializeField] float DANGER_DISTANCE = 7f;
     [SerializeField] float MIDDLE_DISTANCE = 40f;
     [SerializeField] float CAREFUL_DISTANCE = 15f;
     [SerializeField] float NEAR_DISTANCE = 3f; // 5f; //5f;
@@ -43,8 +44,8 @@ public class AIControl : MonoBehaviour {
         lookingAt = player.transform;
         if (!character.IsHurt()) {
             CharacterController enemyChar = lookingAt.GetComponent<CharacterController>();
-            if (!enemyChar.IsAttacking()) character.Unblock();
-            //if (character.IsBlocking()) character.Unblock();
+            //if (!enemyChar.IsAttacking()) character.Unblock();
+            if (!IsDangerous()) character.Unblock();
 
             if (enemy) {
                 if (IsAttackable(lookingAt)) {
@@ -80,7 +81,8 @@ public class AIControl : MonoBehaviour {
     void FollowCarefully(Transform target) {
         CharacterController enemy = target.GetComponent<CharacterController>();
         float rnd = Random.Range(0f, 1f);
-        if (enemy.IsAttacking()) {
+        //if (enemy.IsAttacking()) {
+        if (IsDangerous()) {
             //if (rnd > 0.925f) Block();
             //else Follow2(target);
             //DefenseAction(false, () => { Follow2(target); });
@@ -104,7 +106,8 @@ public class AIControl : MonoBehaviour {
     void MeleeCombat(Transform target) {
         CharacterController enemy = target.GetComponent<CharacterController>();
         float rnd = Random.Range(0f, 1f);
-        if (enemy.IsAttacking()) {
+        //if (enemy.IsAttacking()) {
+        if (IsDangerous()) {
             //if (rnd > 0.925f) Block();
             //else if (rnd > 0.921f) MeleeAttack();
             //AttackDefenseAction(true);
@@ -146,6 +149,15 @@ public class AIControl : MonoBehaviour {
         if (target.position.x < transform.position.x) return -1;
         if (target.position.x > transform.position.x) return 1;
         else return 0;
+    }
+
+    bool IsDangerous() {
+        if (player.IsAttacking() && !player.IsEndingAttack() && Vector2.Distance(player.transform.position, transform.position) <= DANGER_DISTANCE) return true;
+        GameObject[] attacks = GameObject.FindGameObjectsWithTag("AttackEffect");
+        foreach (GameObject attack in attacks) {
+            if (attack.GetComponent<IAttackEffect>().GetOwner() != transform && Vector2.Distance(attack.transform.position, transform.position) <= DANGER_DISTANCE) return true;
+        }
+        return false;
     }
 
     /*

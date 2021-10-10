@@ -30,6 +30,10 @@ public class RangeEffectController : MonoBehaviour, IAttackEffect {
         direction = (int)-character.localScale.x;
     }
 
+    public Transform GetOwner() {
+        return character;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.gameObject != character.gameObject && isMoving) {
             if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy")) {
@@ -57,6 +61,7 @@ public class RangeEffectController : MonoBehaviour, IAttackEffect {
             Vector3 vOffset = new Vector2(xOffset, yOffset);
             anim.SetTrigger("Impact");
             isMoving = false;
+            tag = "Untagged";
             Destroy(rb);
             if (result == 1) {
                 //Destroy(gameObject);
