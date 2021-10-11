@@ -35,7 +35,8 @@ public class CharacterController : MonoBehaviour {
     }
 
     public void Attack() {
-        if (!block.IsBlocking() && !IsAttacking()) attack.Attack(equipment.GetWeapon()); ;
+        Debug.Log("Attack: Blocking:" + block.IsBlocking() + "IsAttackgin" + IsAttacking());
+        if (!block.IsBlocking() && !IsAttacking()) attack.Attack(equipment.GetWeapon());
     }
 
     public bool IsAttacking() => attack.IsAttacking();

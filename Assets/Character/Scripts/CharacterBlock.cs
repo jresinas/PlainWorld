@@ -16,13 +16,13 @@ public class CharacterBlock : MonoBehaviour {
         isHoldBlocking = true;
     }
 
-    public void EndBlock() {
-        isBlocking = false;
-    }
-
     public void Unblock() {
         anim.SetBool("Block", false);
         isHoldBlocking = false;
+    }
+
+    public void EndBlock() {
+        isBlocking = false;
     }
 
     public bool IsBlocking() {

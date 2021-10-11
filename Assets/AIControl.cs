@@ -45,17 +45,22 @@ public class AIControl : MonoBehaviour {
         if (!character.IsHurt()) {
             CharacterController enemyChar = lookingAt.GetComponent<CharacterController>();
             //if (!enemyChar.IsAttacking()) character.Unblock();
-            if (!IsDangerous()) character.Unblock();
+            if (!IsDangerous(lookingAt)) character.Unblock();
 
             if (enemy) {
+                Debug.Log("ES ENEMIGO");
                 if (IsAttackable(lookingAt)) {
+                    Debug.Log("ATACABLE");
                     Look(lookingAt);
                     MeleeCombat(lookingAt);
                 } else if (IsCarefulDistance(lookingAt)) {
+                    Debug.Log("CUIDADO");
                     FollowCarefully(lookingAt);
                 } else if (IsMiddleDistance(lookingAt)) {
+                    Debug.Log("MEDIA");
                     Follow(lookingAt);
                 } else if (IsNear(lookingAt)) {
+                    Debug.Log("CERCA");
                     WalkAway(lookingAt);
                 }
             } else if (ally) {
@@ -82,7 +87,7 @@ public class AIControl : MonoBehaviour {
         CharacterController enemy = target.GetComponent<CharacterController>();
         float rnd = Random.Range(0f, 1f);
         //if (enemy.IsAttacking()) {
-        if (IsDangerous()) {
+        if (IsDangerous(target)) {
             //if (rnd > 0.925f) Block();
             //else Follow2(target);
             //DefenseAction(false, () => { Follow2(target); });
@@ -104,16 +109,20 @@ public class AIControl : MonoBehaviour {
     }
 
     void MeleeCombat(Transform target) {
+        Debug.Log("MELEE");
         CharacterController enemy = target.GetComponent<CharacterController>();
         float rnd = Random.Range(0f, 1f);
         //if (enemy.IsAttacking()) {
-        if (IsDangerous()) {
+        if (IsDangerous(target)) {
+            Debug.Log("PELIGROSO");
             //if (rnd > 0.925f) Block();
             //else if (rnd > 0.921f) MeleeAttack();
             //AttackDefenseAction(true);
             if (rnd < defenseCombatDistanceValue) Block();
             else if (rnd < defenseCombatDistanceValue + counterAttackValue) MeleeAttack();
         } else {
+            Debug.Log("NO PELIGROSO");
+            Debug.Log(rnd);
             //if (rnd > 0.96f) MeleeAttack();
             //AttackAction();
             if (rnd < attackValue) MeleeAttack();
@@ -126,6 +135,7 @@ public class AIControl : MonoBehaviour {
     }
 
     void MeleeAttack() {
+        Debug.Log("MeleeAttack");
         character.Attack();
     }
 
@@ -151,14 +161,16 @@ public class AIControl : MonoBehaviour {
         else return 0;
     }
 
-    bool IsDangerous() {
-        if (player.IsAttacking() && !player.IsEndingAttack() && Vector2.Distance(player.transform.position, transform.position) <= DANGER_DISTANCE) return true;
+    bool IsDangerous(Transform target) {
+        CharacterController enemy = target.GetComponent<CharacterController>();
+        if (enemy.IsAttacking() && !enemy.IsEndingAttack() && Vector2.Distance(target.position, transform.position) <= DANGER_DISTANCE) return true;
         GameObject[] attacks = GameObject.FindGameObjectsWithTag("AttackEffect");
         foreach (GameObject attack in attacks) {
             if (attack.GetComponent<IAttackEffect>().GetOwner() != transform && Vector2.Distance(attack.transform.position, transform.position) <= DANGER_DISTANCE) return true;
         }
         return false;
     }
+
 
     /*
     void DefenseAction(bool isCombatPosition, System.Action callbackMethod = null) {
