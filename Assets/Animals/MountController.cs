@@ -43,6 +43,8 @@ public class MountController : MonoBehaviour {
     }
 
     void Turn(int direction) {
+        // Fix mount position when flip
+        transform.position += new Vector3(mount.localPosition.x * 2 * direction, 0);
         transform.localScale = new Vector2(-direction, 1);
     }
 
